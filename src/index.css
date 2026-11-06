@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .font-pixel {
+    font-family: 'Press Start 2P', monospace;
+  }
+  .font-cairo {
+    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  }
+  .font-tajawal {
+    font-family: 'Tajawal', system-ui, -apple-system, sans-serif;
+  }
+  .font-game {
+    font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Minecraft Slider */
+input[type="range"].mc-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 12px;
+  background: #2b2b2b;
+  border: 2px solid #5a5a5a;
+  box-shadow: inset 2px 2px 0 #181818;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].mc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: #f59e0b;
+  border-top: 3px solid #fde68a;
+  border-left: 3px solid #fde68a;
+  border-right: 3px solid #78350f;
+  border-bottom: 3px solid #78350f;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  cursor: pointer;
+}
+
+input[type="range"].mc-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: #f59e0b;
+  border-top: 3px solid #fde68a;
+  border-left: 3px solid #fde68a;
+  border-right: 3px solid #78350f;
+  border-bottom: 3px solid #78350f;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  cursor: pointer;
+}
+
+@keyframes creeperPulse {
+  0% {
+    transform: scale(0.95);
+    filter: brightness(1) drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
+  }
+  50% {
+    transform: scale(1.12);
+    filter: brightness(1.7) drop-shadow(0 0 24px rgba(255, 255, 255, 0.9));
+  }
+  100% {
+    transform: scale(1.28);
+    filter: brightness(2.4) contrast(1.4) drop-shadow(0 0 40px rgba(255, 255, 255, 1));
+  }
+}
+
+/* Minecraft UI Bevel Border & Button Styles */
+.mc-button {
+  position: relative;
+  border-top: 4px solid #b6b6b6;
+  border-left: 4px solid #b6b6b6;
+  border-right: 4px solid #3c3c3c;
+  border-bottom: 4px solid #3c3c3c;
+  background-color: #727272;
+  box-shadow: inset 2px 2px 0px #ffffff, inset -2px -2px 0px #242424, 0 4px 0 #181818;
+  transition: all 0.05s ease;
+  user-select: none;
+}
+
+.mc-button:hover:not(:disabled) {
+  background-color: #8a8a8a;
+  border-top-color: #cfcfcf;
+  border-left-color: #cfcfcf;
+}
+
+.mc-button:active:not(:disabled) {
+  border-top: 4px solid #3c3c3c;
+  border-left: 4px solid #3c3c3c;
+  border-right: 4px solid #b6b6b6;
+  border-bottom: 4px solid #b6b6b6;
+  transform: translateY(2px);
+  box-shadow: inset 2px 2px 0px #181818, inset -2px -2px 0px #ffffff, 0 2px 0 #181818;
+}
+
+.mc-button-green {
+  background-color: #2e7d32;
+  border-top-color: #66bb6a;
+  border-left-color: #66bb6a;
+  border-right-color: #1b5e20;
+  border-bottom-color: #1b5e20;
+  box-shadow: inset 2px 2px 0px #81c784, inset -2px -2px 0px #0d3810, 0 4px 0 #08210a;
+}
+.mc-button-green:hover:not(:disabled) {
+  background-color: #388e3c;
+  border-top-color: #81c784;
+  border-left-color: #81c784;
+}
+
+.mc-button-gold {
+  background-color: #d97706;
+  border-top-color: #fbbf24;
+  border-left-color: #fbbf24;
+  border-right-color: #92400e;
+  border-bottom-color: #92400e;
+  box-shadow: inset 2px 2px 0px #fde68a, inset -2px -2px 0px #78350f, 0 4px 0 #451a03;
+}
+.mc-button-gold:hover:not(:disabled) {
+  background-color: #f59e0b;
+  border-top-color: #fde68a;
+  border-left-color: #fde68a;
+}
+
+.mc-panel {
+  background-color: #2b2b2b;
+  border-top: 4px solid #5a5a5a;
+  border-left: 4px solid #5a5a5a;
+  border-right: 4px solid #141414;
+  border-bottom: 4px solid #141414;
+  box-shadow: inset 3px 3px 0 #3a3a3a, inset -3px -3px 0 #1c1c1c, 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+.mc-card {
+  background-color: #1e1e1e;
+  border: 3px solid #3f3f3f;
+  box-shadow: inset 2px 2px 0 #303030, inset -2px -2px 0 #121212;
+}
+
+/* Custom Minecraft-style text shadows */
+.text-pixel-shadow {
+  text-shadow: 2px 2px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, -1px 1px 0px #000, 2px 0px 0px #000, 0px 2px 0px #000;
+}
+
+.text-gold-shadow {
+  text-shadow: 2px 2px 0px #78350f, -1px -1px 0px #451a03;
+}
+
+/* Hide scrollbars but allow scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

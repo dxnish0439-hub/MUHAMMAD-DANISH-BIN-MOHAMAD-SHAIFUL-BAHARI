@@ -1,0 +1,6 @@
+{
+  "name": "Minecraft Digital Runner: Adab Berkomunikasi di Dunia Digital",
+  "description": "Permainan 3D Subway Surfers berkonsep Minecraft tentang adab berkomunikasi di dunia digital dengan kuiz 10 checkpoint, larian 3 lorong, syiling, nyawa, dan papan pendahulu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

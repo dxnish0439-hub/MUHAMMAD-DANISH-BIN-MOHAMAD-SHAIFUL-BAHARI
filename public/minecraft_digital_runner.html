@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>عَدَّاءُ مَاينكِرَافت الرَّقْمِيُّ: آدَابُ التَّوَاصُلِ فِي الْعَالَمِ الرَّقْمِيِّ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      background-color: #121214;
+      color: #ffffff;
+      font-family: 'Cairo', system-ui, sans-serif;
+      overflow: hidden;
+      touch-action: none;
+      width: 100vw;
+      height: 100vh;
+    }
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .font-pixel {
+      font-family: 'Press Start 2P', monospace;
+    }
+    .text-pixel-shadow {
+      text-shadow: 2px 2px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, -1px 1px 0px #000, 2px 0px 0px #000, 0px 2px 0px #000;
+    }
+    .text-gold-shadow {
+      text-shadow: 2px 2px 0px #78350f, -1px -1px 0px #451a03;
+    }
+    .mc-button {
+      position: relative;
+      border-top: 4px solid #b6b6b6;
+      border-left: 4px solid #b6b6b6;
+      border-right: 4px solid #3c3c3c;
+      border-bottom: 4px solid #3c3c3c;
+      background-color: #727272;
+      box-shadow: inset 2px 2px 0px #ffffff, inset -2px -2px 0px #242424, 0 4px 0 #181818;
+      color: #fff;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.05s ease;
+    }
+    .mc-button:active {
+      border-top: 4px solid #3c3c3c;
+      border-left: 4px solid #3c3c3c;
+      border-right: 4px solid #b6b6b6;
+      border-bottom: 4px solid #b6b6b6;
+      transform: translateY(2px);
+    }
+    .mc-button-green {
+      background-color: #2e7d32;
+      border-top-color: #66bb6a;
+      border-left-color: #66bb6a;
+      border-right-color: #1b5e20;
+      border-bottom-color: #1b5e20;
+      box-shadow: inset 2px 2px 0px #81c784, inset -2px -2px 0px #0d3810, 0 4px 0 #08210a;
+    }
+    .mc-button-gold {
+      background-color: #d97706;
+      border-top-color: #fbbf24;
+      border-left-color: #fbbf24;
+      border-right-color: #92400e;
+      border-bottom-color: #92400e;
+      box-shadow: inset 2px 2px 0px #fde68a, inset -2px -2px 0px #78350f, 0 4px 0 #451a03;
+    }
+    .mc-panel {
+      background-color: #2b2b2b;
+      border-top: 4px solid #5a5a5a;
+      border-left: 4px solid #5a5a5a;
+      border-right: 4px solid #141414;
+      border-bottom: 4px solid #141414;
+      box-shadow: inset 3px 3px 0 #3a3a3a, inset -3px -3px 0 #1c1c1c, 0 8px 24px rgba(0, 0, 0, 0.7);
+    }
+    .mc-card {
+      background-color: #1e1e1e;
+      border: 3px solid #3f3f3f;
+      box-shadow: inset 2px 2px 0 #303030, inset -2px -2px 0 #121212;
+    }
+    @keyframes creeperPulse {
+      0% {
+        transform: scale(0.95);
+        filter: brightness(1) drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
+      }
+      50% {
+        transform: scale(1.12);
+        filter: brightness(1.7) drop-shadow(0 0 24px rgba(255, 255, 255, 0.9));
+      }
+      100% {
+        transform: scale(1.28);
+        filter: brightness(2.4) contrast(1.4) drop-shadow(0 0 40px rgba(255, 255, 255, 1));
+      }
+    }
+    .creeper-animated {
+      animation: creeperPulse 0.22s infinite alternate;
+    }
+    input[type="range"].mc-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 12px;
+      background: #2b2b2b;
+      border: 2px solid #5a5a5a;
+      box-shadow: inset 2px 2px 0 #181818;
+      outline: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    input[type="range"].mc-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      background: #f59e0b;
+      border-top: 3px solid #fde68a;
+      border-left: 3px solid #fde68a;
+      border-right: 3px solid #78350f;
+      border-bottom: 3px solid #78350f;
+      cursor: pointer;
+    }
+    .ui-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .pointer-auto {
+      pointer-events: auto;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-canvas"></div>
+
+  <!-- PERSISTENT TOP-LEFT VOLUME CONTROL -->
+  <div style="position: fixed; top: 16px; left: 16px; z-index: 70;" class="pointer-auto">
+    <button id="vol-btn" class="mc-button" style="padding: 10px; width: 44px; height: 44px;" title="التحكم في الصوت">
+      🔊
+    </button>
+    <div id="vol-panel" class="mc-panel hidden" style="position: absolute; top: 50px; left: 0; width: 280px; padding: 16px; border: 4px solid #f59e0b;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #555; padding-bottom: 8px; margin-bottom: 12px;">
+        <span style="font-weight: 800; font-size: 14px; color: #fde68a;">مُسْتَوَى الصَّوْتِ</span>
+        <button id="vol-close-btn" class="mc-button" style="padding: 2px 8px; font-size: 12px;">✕</button>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;">
+        <span style="color: #ccc;">النِّسْبَةُ:</span>
+        <span id="vol-pct-text" class="font-pixel" style="color: #fbbf24;">٧٠٪</span>
+      </div>
+      <input id="vol-slider" type="range" min="0" max="100" value="70" class="mc-slider" style="margin-bottom: 14px;">
+      <button id="vol-mute-btn" class="mc-button mc-button-gold" style="width: 100%; padding: 8px; font-size: 13px;">
+        كَتْمُ الصَّوْتِ
+      </button>
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud-layer" class="ui-layer hidden" style="padding: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="mc-panel" style="padding: 6px 12px; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+          <span style="font-weight: 800; font-size: 13px;">الْقُلُوبُ:</span>
+          <span id="hud-hearts" style="font-size: 18px; letter-spacing: 2px;">❤️❤️❤️❤️❤️❤️❤️</span>
+          <span id="hud-lives-num" class="font-pixel" style="font-size: 11px; color: #fbbf24;">(٧/٧)</span>
+        </div>
+        <div class="mc-panel" style="padding: 6px 12px; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">🎯</span>
+          <div>
+            <div style="font-size: 10px; color: #34d399; font-weight: bold;">نُقْطَةُ التَّفَتُّشِ</div>
+            <div id="hud-checkpoint" class="font-pixel" style="font-size: 12px;">٠ / ١٠</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mc-panel" style="padding: 8px 18px; text-align: center;">
+        <div style="font-size: 11px; font-weight: 800; color: #fbbf24;" class="text-pixel-shadow">النِّقَاطُ</div>
+        <div id="hud-score" class="font-pixel text-pixel-shadow" style="font-size: 18px; letter-spacing: 1px;">0</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+        <div class="mc-panel" style="padding: 6px 12px; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 18px;">🪙</span>
+          <div>
+            <div style="font-size: 10px; color: #facc15; font-weight: bold;">الْعُمْلَاتُ</div>
+            <div id="hud-coins" class="font-pixel" style="font-size: 12px; color: #fde047;">0</div>
+          </div>
+        </div>
+        <button id="pause-btn" class="mc-button pointer-auto" style="padding: 6px 12px; font-size: 12px;">
+          ⏸️ إِيقَاف
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Touch Controls -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 8px;">
+      <div style="display: flex; gap: 8px;" class="pointer-auto">
+        <button id="btn-touch-right" class="mc-button" style="width: 56px; height: 56px; font-size: 24px;">➡️</button>
+        <button id="btn-touch-left" class="mc-button" style="width: 56px; height: 56px; font-size: 24px;">⬅️</button>
+      </div>
+      <div style="display: flex; gap: 8px;" class="pointer-auto">
+        <button id="btn-touch-slide" class="mc-button mc-button-gold" style="width: 56px; height: 56px; font-size: 12px; flex-direction: column;">
+          <span>⬇️</span>
+          <span style="font-size: 9px; margin-top: 2px;">انْزِلَاق</span>
+        </button>
+        <button id="btn-touch-jump" class="mc-button mc-button-green" style="width: 56px; height: 56px; font-size: 12px; flex-direction: column;">
+          <span>⬆️</span>
+          <span style="font-size: 9px; margin-top: 2px;">قَفْز</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN MENU -->
+  <div id="menu-screen" class="ui-layer" style="display: flex; flex-direction: column; justify-content: space-between; padding: 24px;">
+    <div style="display: flex; justify-content: space-between;" class="pointer-auto">
+      <div class="mc-panel" style="padding: 6px 14px; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+        <span style="color: #fbbf24;">🏆</span>
+        <span style="font-size: 12px; font-weight: bold;">أَعْلَى نَقْطَةٍ:</span>
+        <span id="menu-highscore" class="font-pixel" style="color: #fde047; font-size: 12px;">0</span>
+      </div>
+    </div>
+
+    <div style="margin: auto; text-align: center; max-width: 540px;" class="pointer-auto">
+      <div style="margin-bottom: 8px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 4px; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); font-size: 12px; color: #fde047; font-weight: 800;">
+        ✨ إِصْدَارٌ تَعْلِيمِيٌّ ثُلَاثِيُّ الأَبْعَادِ
+      </div>
+      <h1 class="text-pixel-shadow" style="font-size: 34px; color: #fde047; font-weight: 900; line-height: 1.2; margin-bottom: 8px;">
+        عَدَّاءُ مَاينكِرَافت<br>
+        <span style="color: #34d399;">الرَّقْمِيُّ</span>
+      </h1>
+      <div class="mc-panel" style="padding: 6px 16px; display: inline-block; border: 2px solid #d97706; margin-bottom: 16px;">
+        <h2 style="font-size: 14px; color: #fbbf24; font-weight: 800;" class="text-pixel-shadow">
+          آدَابُ التَّوَاصُلِ فِي الْعَالَمِ الرَّقْمِيِّ
+        </h2>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 24px;">
+        <div class="mc-panel" style="padding: 6px 14px; text-align: right;">
+          <div style="font-size: 10px; color: #34d399; font-weight: bold;">الْمُسَابَقَةُ</div>
+          <div style="font-size: 13px; font-weight: 800;">١٠ أَسْئِلَةٍ</div>
+        </div>
+        <div class="mc-panel" style="padding: 6px 14px; text-align: right;">
+          <div style="font-size: 10px; color: #ef4444; font-weight: bold;">الْمُحَاوَلَاتُ</div>
+          <div style="font-size: 13px; font-weight: 800;">٧ قُلُوبٍ</div>
+        </div>
+      </div>
+
+      <button id="start-btn" class="mc-button mc-button-green" style="width: 100%; padding: 16px 24px; font-size: 18px; border-radius: 6px; margin-bottom: 12px;">
+        ▶️ ابْدَأِ اللَّعِبَ الآنَ
+      </button>
+
+      <div style="display: flex; gap: 8px;">
+        <button id="btn-how" class="mc-button" style="flex: 1; padding: 10px; font-size: 13px;">
+          📖 كَيْفِيَّةُ اللَّعِبِ
+        </button>
+        <button id="btn-credits" class="mc-button" style="flex: 1; padding: 10px; font-size: 13px;">
+          📜 الأَهْدَافُ التَّرْبَوِيَّةُ
+        </button>
+      </div>
+    </div>
+
+    <div style="text-align: center; font-size: 11px; color: #aaa;">
+      تحكّم عبر الأسهم أو W,A,S,D على الحاسوب • أو السحب باللمس على الهاتف
+    </div>
+  </div>
+
+  <!-- QUIZ CHECKPOINT MODAL -->
+  <div id="quiz-modal" class="modal-backdrop hidden">
+    <div class="mc-panel" style="max-width: 600px; width: 100%; padding: 20px; border: 4px solid #d97706;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #555; padding-bottom: 10px; margin-bottom: 12px;">
+        <div>
+          <div id="quiz-chk-tag" style="font-size: 11px; color: #fbbf24; font-weight: 800;">نُقْطَةُ التَّفَتُّشِ #١</div>
+          <div id="quiz-num-tag" style="font-size: 14px; font-weight: 800;">السُّؤَالُ ١ مِنْ ١٠</div>
+        </div>
+        <div class="mc-card" style="padding: 4px 10px; font-size: 12px;">
+          الْقُلُوبُ: <span id="quiz-lives-text" style="color: #ef4444; font-weight: bold;">(٧/٧)</span>
+        </div>
+      </div>
+
+      <div class="mc-card" style="padding: 16px; margin-bottom: 16px; background: #1c1c1c;">
+        <p id="quiz-question-text" style="font-size: 16px; font-weight: 800; line-height: 1.5; color: #f3f4f6;">
+          السؤال...
+        </p>
+      </div>
+
+      <div id="quiz-options-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+      </div>
+
+      <div style="text-align: center; font-size: 12px; color: #9ca3af;">
+        💡 اخْتَرْ دَوْمًا الإِجَابَةَ الَّتِي تُجَسِّدُ الآدَابَ وَالأَخْلَاقَ فِي التَّوَاصُلِ الرَّقْمِيِّ.
+      </div>
+    </div>
+  </div>
+
+  <!-- CORRECT ANSWER MODAL -->
+  <div id="correct-modal" class="modal-backdrop hidden">
+    <div class="mc-panel" style="max-width: 520px; width: 100%; padding: 24px; border: 4px solid #22c55e;">
+      <div style="display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #555; padding-bottom: 12px; margin-bottom: 14px;">
+        <span style="font-size: 32px;">✅</span>
+        <div>
+          <h2 style="font-size: 18px; color: #4ade80; font-weight: 900;">تَهَانِينَا! إِجَابَتُكَ صَحِيحَةٌ</h2>
+          <p style="font-size: 12px; color: #ccc;">اخْتِيَارٌ سَدِيدٌ يُعَبِّرُ عَنِ الْوَعْيِ وَالأَخْلَاقِ الرَّقْمِيَّةِ!</p>
+        </div>
+      </div>
+
+      <div class="mc-card" style="padding: 12px; margin-bottom: 14px; border: 2px solid #16a34a; background: rgba(22, 163, 74, 0.15);">
+        <div style="font-size: 11px; color: #86efac; font-weight: bold;">إِجَابَتُكَ الْمُخْتَارَةُ:</div>
+        <div id="correct-chosen-answer" style="font-size: 14px; font-weight: 800; margin-top: 4px;">...</div>
+      </div>
+
+      <div class="mc-card" style="padding: 14px; margin-bottom: 16px; background: #1c1c1c;">
+        <div style="font-size: 11px; color: #fbbf24; font-weight: bold; margin-bottom: 4px;">📚 الشَّرْحُ وَالتَّوْجِيهُ التَّرْبَوِيُّ:</div>
+        <p id="correct-explanation" style="font-size: 13px; color: #e5e7eb; line-height: 1.5;">...</p>
+      </div>
+
+      <button id="correct-continue-btn" class="mc-button mc-button-green" style="width: 100%; padding: 14px; font-size: 15px;">
+        مُتَابَعَةُ الرَّكْضِ ⬅️
+      </button>
+    </div>
+  </div>
+
+  <!-- CREEPER WRONG ANSWER MODAL -->
+  <div id="creeper-modal" class="modal-backdrop hidden">
+    <div id="creeper-anim-container" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+      <div class="mc-panel" style="padding: 8px 16px; border: 2px solid #ef4444; background: rgba(185, 28, 28, 0.8); margin-bottom: 20px;">
+        <span style="font-weight: 900; font-size: 16px; color: #fecaca;">⚠️ انْتَبِهْ! خَطَرُ الـ CREEPER!</span>
+      </div>
+      <div class="creeper-animated" style="display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 110px; height: 110px; background: #2e7d32; border: 4px solid #1b5e20; position: relative; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div style="display: flex; justify-content: space-between; padding: 0 4px;">
+            <div style="width: 22px; height: 22px; background: #000;"></div>
+            <div style="width: 22px; height: 22px; background: #000;"></div>
+          </div>
+          <div style="align-self: center; display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 16px; height: 24px; background: #000;"></div>
+            <div style="width: 44px; height: 16px; background: #000;"></div>
+            <div style="display: flex; justify-content: space-between; width: 44px;">
+              <div style="width: 12px; height: 18px; background: #000;"></div>
+              <div style="width: 12px; height: 18px; background: #000;"></div>
+            </div>
+          </div>
+        </div>
+        <div style="width: 80px; height: 110px; background: #256e29; border: 4px solid #1b5e20;"></div>
+        <div style="display: flex; justify-content: space-between; width: 90px; margin-top: -4px;">
+          <div style="width: 38px; height: 38px; background: #1b5e20; border: 2px solid #000;"></div>
+          <div style="width: 38px; height: 38px; background: #1b5e20; border: 2px solid #000;"></div>
+        </div>
+      </div>
+      <div class="font-pixel" style="margin-top: 16px; color: #fbbf24; font-size: 14px; letter-spacing: 2px;">
+        TSSSSSSSSSS...!
+      </div>
+    </div>
+
+    <div id="creeper-feedback-panel" class="mc-panel hidden" style="max-width: 540px; width: 100%; padding: 22px; border: 4px solid #ef4444;">
+      <div style="display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #555; padding-bottom: 12px; margin-bottom: 12px;">
+        <span style="font-size: 32px;">💥</span>
+        <div>
+          <h2 style="font-size: 16px; color: #f87171; font-weight: 900;">أَحْسَنْتَ الْمُحَاوَلَةَ، لَكِنَّ إِجَابَتَكَ خَاطِئَةٌ!</h2>
+          <p style="font-size: 13px; color: #fbbf24; font-weight: bold;">لَقَدْ فَقَدْتَ قَلْبًا وَاحِدًا!</p>
+        </div>
+      </div>
+
+      <div class="mc-card" style="padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #7f1d1d; background: rgba(127, 29, 29, 0.3);">
+        <span style="font-size: 12px; font-weight: bold; color: #fca5a5;">الْقُلُوبُ الْمُتَبَقِّيَةُ:</span>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span id="creeper-hearts-display" style="font-size: 16px;">❤️❤️❤️❤️❤️❤️</span>
+          <span id="creeper-hearts-num" class="font-pixel" style="font-size: 11px; color: #facc15; margin-right: 6px;">(٦/٧)</span>
+        </div>
+      </div>
+
+      <div class="mc-card" style="padding: 10px; margin-bottom: 12px; background: rgba(0,0,0,0.4);">
+        <div style="font-size: 11px; color: #aaa; font-weight: bold;">إِجَابَتُكَ الْمُخْتَارَةُ:</div>
+        <div id="creeper-chosen-answer" style="font-size: 13px; color: #f87171; text-decoration: line-through; font-weight: bold;">...</div>
+      </div>
+
+      <div class="mc-card" style="padding: 12px; margin-bottom: 16px; background: #1c1c1c;">
+        <div style="font-size: 11px; color: #fbbf24; font-weight: bold; margin-bottom: 4px;">💡 الإِجَابَةُ الصَّحِيحَةُ وَالتَّوْجِيهُ:</div>
+        <p id="creeper-correct-text" style="font-size: 13px; font-weight: bold; color: #4ade80; margin-bottom: 6px;">...</p>
+        <p id="creeper-explanation-text" style="font-size: 12px; color: #d1d5db; line-height: 1.5;">...</p>
+      </div>
+
+      <button id="creeper-tryagain-btn" class="mc-button mc-button-gold" style="width: 100%; padding: 14px; font-size: 15px;">
+        🔄 حَاوِلْ مَرَّةً أُخْرَى
+      </button>
+    </div>
+  </div>
+
+  <!-- GAME OVER MODAL -->
+  <div id="gameover-modal" class="modal-backdrop hidden">
+    <div class="mc-panel" style="max-width: 460px; width: 100%; padding: 24px; text-align: center; border: 4px solid #b91c1c;">
+      <div style="font-size: 40px; margin-bottom: 8px;">💀</div>
+      <h2 class="text-pixel-shadow" style="font-size: 26px; color: #ef4444; font-weight: 900; margin-bottom: 8px;">
+        انْتَهَتِ اللَّعْبَةُ
+      </h2>
+      <p style="font-size: 13px; color: #ccc; margin-bottom: 16px;">
+        نَفِدَتْ جَمِيعُ قُلُوبِكَ! لَا تَسْتَسْلِمْ، وَأَعِدِ الْمُحَاوَلَةَ لِتُتْقِنَ آدَابَ التَّوَاصُلِ الرَّقْمِيِّ.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+        <div class="mc-card" style="padding: 8px;">
+          <div style="font-size: 10px; color: #888;">الإِجَابَاتُ</div>
+          <div id="go-answered" class="font-pixel" style="font-size: 14px; color: #34d399;">0 / ١٠</div>
+        </div>
+        <div class="mc-card" style="padding: 8px;">
+          <div style="font-size: 10px; color: #888;">الْعُمْلَاتُ</div>
+          <div id="go-coins" class="font-pixel" style="font-size: 14px; color: #facc15;">0</div>
+        </div>
+        <div class="mc-card" style="padding: 8px;">
+          <div style="font-size: 10px; color: #888;">النِّقَاطُ</div>
+          <div id="go-score" class="font-pixel" style="font-size: 14px; color: #fbbf24;">0</div>
+        </div>
+      </div>
+
+      <button id="go-restart-btn" class="mc-button mc-button-green" style="width: 100%; padding: 14px; font-size: 15px; margin-bottom: 10px;">
+        🔄 إِعَادَةُ اللَّعِبِ (٧ قُلُوبٍ)
+      </button>
+      <button id="go-menu-btn" class="mc-button" style="width: 100%; padding: 10px; font-size: 13px;">
+        🏠 الْقَائِمَةُ الرَّئِيسِيَّةُ
+      </button>
+    </div>
+  </div>
+
+  <!-- VICTORY MODAL -->
+  <div id="victory-modal" class="modal-backdrop hidden">
+    <div class="mc-panel" style="max-width: 500px; width: 100%; padding: 26px; text-align: center; border: 4px solid #facc15;">
+      <div style="font-size: 44px; margin-bottom: 8px;">🏆</div>
+      <h2 class="text-gold-shadow" style="font-size: 22px; color: #fde047; font-weight: 900; margin-bottom: 8px;">
+        تَهَانِينَا! لَقَدْ فَزْتَ بِالْمَرْحَلَةِ!
+      </h2>
+      <p style="font-size: 13px; color: #34d399; font-weight: bold; margin-bottom: 16px;">
+        "تهانينا! لقد أتقنت آداب التواصل في العالم الرقمي بنجاح تام."
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+        <div class="mc-card" style="padding: 8px;">
+          <div style="font-size: 10px; color: #888;">مَجْمُوعُ النِّقَاطِ</div>
+          <div id="vic-score" class="font-pixel" style="font-size: 14px; color: #fde047;">0</div>
+        </div>
+        <div class="mc-card" style="padding: 8px;">
+          <div style="font-size: 10px; color: #888;">الْعُمْلَاتُ</div>
+          <div id="vic-coins" class="font-pixel" style="font-size: 14px; color: #facc15;">0</div>
+        </div>
+        <div class="mc-card" style="padding: 8px;">
+          <div style="font-size: 10px; color: #888;">الْقُلُوبُ</div>
+          <div id="vic-lives" class="font-pixel" style="font-size: 14px; color: #ef4444;">٧ / ٧</div>
+        </div>
+      </div>
+
+      <button id="vic-restart-btn" class="mc-button mc-button-green" style="width: 100%; padding: 14px; font-size: 15px; margin-bottom: 10px;">
+        🔄 إِعَادَةُ اللَّعِبِ
+      </button>
+      <button id="vic-menu-btn" class="mc-button" style="width: 100%; padding: 10px; font-size: 13px;">
+        🏠 الْقَائِمَةُ الرَّئِيسِيَّةُ
+      </button>
+    </div>
+  </div>
+
+  <!-- HOW TO PLAY MODAL -->
+  <div id="how-modal" class="modal-backdrop hidden">
+    <div class="mc-panel" style="max-width: 520px; width: 100%; padding: 22px; border: 4px solid #d97706;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #555; padding-bottom: 8px; margin-bottom: 14px;">
+        <h3 style="font-size: 16px; color: #fbbf24; font-weight: 800;">📖 كَيْفِيَّةُ اللَّعِبِ</h3>
+        <button id="how-close-btn" class="mc-button" style="padding: 2px 8px;">✕</button>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: #e5e7eb; margin-bottom: 16px;">
+        <p>🏃‍♂️ <strong>الرَّكْضُ فِي ٣ مَسَارَاتٍ:</strong> تَجَنَّبِ الْقِطَارَاتِ، الْحَوَاجِزَ الْحَجَرِيَّةَ، وَحُفَرَ اللَّافَا.</p>
+        <p>❤️ <strong>٧ قُلُوبٍ:</strong> تَبْدَأُ الْمُغَامَرَةَ بِـ ٧ قُلُوبٍ. الِاصْطِدَامُ أَوِ الْخَطَأُ يَخْصِمُ قَلْبًا وَاحِدًا.</p>
+        <p>💥 <strong>الـ CREEPER:</strong> عِنْدَ الإِجَابَةِ الْخَاطِئَةِ، يَظْهَرُ الْـ Creeper لِيَفْجُرَ قَلْبًا وَاحِدًا!</p>
+        <p>🌀 <strong>١٠ مَحَطَّاتِ تَفَتُّشٍ:</strong> اجْتَزْ بَوَّابَاتِ النِّيزَر لِلإِجَابَةِ عَنْ أَسْئِلَةِ آدَابِ التَّوَاصُلِ.</p>
+      </div>
+      <button id="how-ok-btn" class="mc-button mc-button-green" style="width: 100%; padding: 12px; font-size: 14px;">
+        فَهِمْتُ ذَلِكَ!
+      </button>
+    </div>
+  </div>
+
+  <!-- CREDITS MODAL -->
+  <div id="credits-modal" class="modal-backdrop hidden">
+    <div class="mc-panel" style="max-width: 520px; width: 100%; padding: 22px; border: 4px solid #d97706;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #555; padding-bottom: 8px; margin-bottom: 14px;">
+        <h3 style="font-size: 16px; color: #fbbf24; font-weight: 800;">📜 الأَهْدَافُ التَّرْبَوِيَّةُ</h3>
+        <button id="credits-close-btn" class="mc-button" style="padding: 2px 8px;">✕</button>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: #e5e7eb; margin-bottom: 16px;">
+        <p>🌟 <strong>آدَابُ التَّوَاصُلِ فِي الْعَالَمِ الرَّقْمِيِّ:</strong></p>
+        <p>• احْتِرَامُ خُصُوصِيَّةِ صُوَرِ الآخَرِينَ وَطَلَبُ الإِذْنِ دَوْمًا.</p>
+        <p>• مَنْعُ السُّخْرِيَةِ وَالتَّنَمُّرِ عَلَى صُوَرِ الزُّمَلَاءِ.</p>
+        <p>• الشَّجَاعَةُ فِي حَذْفِ الصُّورَةِ وَالِاعْتِذَارِ الصَّادِقِ عِنْدَ الْخَطَأِ.</p>
+        <p>• "نَحْنُ جِيلٌ رَقْمِيٌّ، وَوَاجِبُنَا اسْتِخْدَامُ التِّكْنُولُوجْيَا بِكُلِّ أَدَبٍ وَأَخْلَاقٍ."</p>
+      </div>
+      <button id="credits-ok-btn" class="mc-button" style="width: 100%; padding: 12px; font-size: 14px;">
+        إِغْلَاق
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const QUESTIONS = [
+      {
+        id: 1,
+        question: "مَا الَّذِي يَجِبُ فِعْلُهُ قَبْلَ نَشْرِ صُورَةِ صَدِيقٍ عَلَى وَسَائِلِ التَّوَاصُلِ الِاجْتِمَاعِيِّ؟",
+        options: [
+          { key: "A", text: "نَشْرُهَا فَوْرًا دُونَ تَرَدُّدٍ" },
+          { key: "B", text: "طَلَبُ الإِذْنِ مِنْ صَاحِبِ الصُّورَةِ" },
+          { key: "C", text: "إِرْسَالُهَا إِلَى جَمِيعِ الْمَجْمُوعَاتِ" },
+          { key: "D", text: "تَعْدِيلُ الصُّورَةِ ثُمَّ نَشْرُهَا" }
+        ],
+        correct: "B",
+        explanation: "يَجِبُ عَلَيْنَا دَوْمًا احْتِرَامُ خُصُوصِيَّةِ الآخَرِينَ وَطَلَبُ الإِذْنِ مِنْهُمْ قَبْلَ مُشَارَكَةِ أَيِّ صُورَةٍ تَخُصُّهُمْ."
+      },
+      {
+        id: 2,
+        question: "مَاذَا كَانَ شُعُورُ أَمِيرٍ عِنْدَمَا انْتَشَرَتْ صُورَتُهُ دُونَ إِذْنِهِ؟",
+        options: [
+          { key: "A", text: "شَعَرَ بِالسَّعَادَةِ وَالْبَهْجَةِ" },
+          { key: "B", text: "قَامَ بِنَشْرِ صُوَرِ الآخَرِينَ" },
+          { key: "C", text: "شَعَرَ بِالْخَجَلِ وَعَدَمِ الرَّاحَةِ" },
+          { key: "D", text: "ضَحِكَ كَثِيرًا مَعَ زُمَلَائِهِ" }
+        ],
+        correct: "C",
+        explanation: "نَشْرُ صُوَرِ الآخَرِينَ دُونَ إِذْنِهِمْ قَدْ يُسَبِّبُ لَهُمُ الْخَجَلَ وَالضَّغْطَ النَّفْسِيَّ وَالْإِحْرَاجَ."
+      },
+      {
+        id: 3,
+        question: "هَلْ يَجُوزُ السُّخْرِيَةُ مِنَ الصُّوَرِ الشَّخْصِيَّةِ لِلْأَصْدِقَاءِ؟",
+        options: [
+          { key: "A", text: "نَعَمْ، إِذَا كَانَ الْهَدَفُ مُجَرَّدَ الْمَزَاحِ" },
+          { key: "B", text: "نَعَمْ، إِذَا ضَحِكَ مَعَنَا الآخَرُونَ" },
+          { key: "C", text: "لَا، لِأَنَّ ذَلِكَ يَجْرَحُ مَشَاعِرَ الصَّدِيقِ" },
+          { key: "D", text: "نَعَمْ، إِذَا كَانَتِ الصُّورَةُ مُضْحِكَةً" }
+        ],
+        correct: "C",
+        explanation: "الْمَزَاحُ لَا يَكُونُ أَبَدًا عُذْرًا لِإِهَانَةِ النَّاسِ أَوْ إِيذَاءِ قُلُوبِهِمْ وَمَشَاعِرِهِمْ."
+      },
+      {
+        id: 4,
+        question: "مَا التَّصَرُّفُ الصَّحِيحُ عِنْدَ رُؤْيَةِ صُورَةِ صَدِيقٍ تُنْشَرُ دُونَ إِذْنِهِ؟",
+        options: [
+          { key: "A", text: "إِعَادَةُ إِرْسَالِهَا لِلْمَزِيدِ مِنَ النَّاسِ" },
+          { key: "B", text: "نُصْحُ النَّاشِرِ بِلُطْفٍ لِيَتَوَقَّفَ" },
+          { key: "C", text: "الْمُشَارَكَةُ فِي السُّخْرِيَةِ" },
+          { key: "D", text: "حِفْظُ الصُّورَةِ لِمُشَارَكَتِهَا لَاحِقًا" }
+        ],
+        correct: "B",
+        explanation: "يَجِبُ أَنْ نَنْصَحَ زُمَلَاءَنَا بِالْحِكْمَةِ وَالْمَوْعِظَةِ الْحَسَنَةِ لِإِيقَافِ التَّصَرُّفَاتِ غَيْرِ اللَّائِقَةِ."
+      },
+      {
+        id: 5,
+        question: "مَا الَّذِي يَجِبُ فِعْلُهُ مِمَّنْ نَشَرَ صُورَةً دُونَ إِذْنِ صَاحِبِهَا؟",
+        options: [
+          { key: "A", text: "تَرْكُ الصُّورَةِ وَتَجَاهُلُ الأَمْرِ" },
+          { key: "B", text: "إِلْقَاءُ اللَّوْمِ عَلَى الآخَرِينَ" },
+          { key: "C", text: "حَذْفُ الصُّورَةِ وَالِاعْتِذَارُ بِصِدْقٍ" },
+          { key: "D", text: "نَشْرُ الصُّورَةِ مَرَّةً أُخْرَى" }
+        ],
+        correct: "C",
+        explanation: "كَمَا تَعَلَّمْنَا، قَامَ أَمِيرٌ بِحَذْفِ الصُّورَةِ عَلَى الْفَوْرِ وَالِاعْتِذَارِ لِصَدِيقِهِ بِكُلِّ صِدْقٍ."
+      },
+      {
+        id: 6,
+        question: "مَا الْخُلُقُ الَّذِي يَنْبَغِي التَّحَلِّي بِهِ فِي وَسَائِلِ التَّوَاصُلِ الِاجْتِمَاعِيِّ؟",
+        options: [
+          { key: "A", text: "تَسْقِيطُ وَإِهَانَةُ الآخَرِينَ" },
+          { key: "B", text: "الْتِزَامُ الآدَابِ وَالأَخْلَاقِ الْحَمِيدَةِ" },
+          { key: "C", text: "نَشْرُ عُيُوبِ وَأَسْرَارِ الأَصْدِقَاءِ" },
+          { key: "D", text: "اخْتِلَاقُ الشَّائِعَاتِ وَالْفِتَنِ" }
+        ],
+        correct: "B",
+        explanation: "التِّكْنُولُوجْيَا أَدَاةٌ يَجِبُ تَسْخِيرُهَا بِأَخْلَاقٍ فَاضِلَةٍ، وَأَدَبٍ رَفِيعٍ، وَمَسْؤُولِيَّةٍ كَامِلَةٍ."
+      },
+      {
+        id: 7,
+        question: "مَاذَا يَجِبُ أَنْ نَفْعَلَ عِنْدَمَا نَعْلَمُ أَنَّنَا جَرَحْنَا مَشَاعِرَ صَدِيقٍ؟",
+        options: [
+          { key: "A", text: "التَّظَاهُرُ بِأَنَّ شَيْئًا لَمْ يَحْدُثْ" },
+          { key: "B", text: "لَوْمُ الصَّدِيقِ وَاتِّهَامُهُ" },
+          { key: "C", text: "الِاعْتِذَارُ لَهُ بِكُلِّ صِدْقٍ وَإِخْلَاصٍ" },
+          { key: "D", text: "تَكْرَارُ نَفْسِ السَّلُوكِ السَّيِّئِ" }
+        ],
+        correct: "C",
+        explanation: "الِاعْتِذَارُ الصَّادِقُ دَلِيلٌ عَلَى النُّبْلِ وَالتَّوَاضُعِ، وَهُوَ خُطْوَةٌ شُجَاعَةٌ لِإِصْلَاحِ الْعَلَاقَاتِ."
+      },
+      {
+        id: 8,
+        question: "مَا التَّصَرُّفُ النَّبِيلُ عِنْدَمَا يُقَدِّمُ لَنَا أَحَدٌ اعْتِذَارًا؟",
+        options: [
+          { key: "A", text: "قَبُولُ الِاعْتِذَارِ بِطِيبِ خَاطِرٍ" },
+          { key: "B", text: "السُّخْرِيَةُ مِنْهُ أَمَامَ النَّاسِ" },
+          { key: "C", text: "التَّفْكِيرُ فِي الِانْتِقَامِ مِنْهُ" },
+          { key: "D", text: "نَشْرُ خَطَئِهِ بَيْنَ الزُّمَلَاءِ" }
+        ],
+        correct: "A",
+        explanation: "قَبُولُ الِاعْتِذَارِ وَالتَّسَامُحُ يُوَطِّدُ الصَّدَاقَةَ وَيَزْرَعُ الْمَحَبَّةَ وَيُزِيلُ الْخِلَافَاتِ."
+      },
+      {
+        id: 9,
+        question: "مَا الَّذِي يَجِبُ عَلَيْنَا فِعْلُهُ قَبْلَ نَشْرِ أَيِّ مَنْشُورٍ عَلَى الإِنْتَرْنِت؟",
+        options: [
+          { key: "A", text: "الضَّغْطُ عَلَى زِرِّ النَّشْرِ مُبَاشَرَةً" },
+          { key: "B", text: "التَّفْكِيرُ فِي آثَارِ وَنَتَائِجِ الْمُشَارَكَةِ" },
+          { key: "C", text: "السَّعْيُ لِجَمْعِ أَكْبَرِ عَدَدٍ مِنَ الْمُشَاهَدَاتِ" },
+          { key: "D", text: "مُجَارَاةُ كُلِّ مَا هُوَ رَائِجٌ دُونَ تَمْيِيزٍ" }
+        ],
+        correct: "B",
+        explanation: "يَجِبُ التَّفْكِيرُ وَالتَّأَنِّي قَبْلَ كُلِّ نَشْرٍ لِلتَّأَكُّدِ مِنْ أَنَّهُ لَا يُلْحِقُ الضَّرَرَ بِأَحَدٍ."
+      },
+      {
+        id: 10,
+        question: "مَا الْخُلَاصَةُ الرَّئِيسِيَّةُ لِقِصَّةِ \"آدَابُ التَّوَاصُلِ فِي الْعَالَمِ الرَّقْمِيِّ\"؟",
+        options: [
+          { key: "A", text: "التِّكْنُولُوجْيَا لِلْمَرَحِ وَاللَّهْوِ فَقَطْ" },
+          { key: "B", text: "لَنَا الْحُرِّيَّةُ فِي نَشْرِ كُلِّ مَا نُرِيدُهُ" },
+          { key: "C", text: "يَجِبُ اسْتِخْدَامُ التِّكْنُولُوجْيَا بِأَدَبٍ وَأَخْلَاقٍ" },
+          { key: "D", text: "يَنْبَغِي اتِّبَاعُ كُلِّ التَّوَجُّهَاتِ الشَّائِعَةِ" }
+        ],
+        correct: "C",
+        explanation: "نَحْنُ جِيلُ الْعَصْرِ الرَّقْمِيِّ، وَوَاجِبُنَا اسْتِخْدَامُ هَذِهِ التِّقْنِيَّاتِ بِأَدَبٍ، وَأَخْلَاقٍ، وَمَسْؤُولِيَّةٍ."
+      }
+    ];
+
+    const ARABIC_LETTERS = { A: "أ", B: "ب", C: "ج", D: "د" };
+
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.volume = 0.7;
+        this.isMuted = false;
+        this.masterGain = null;
+        this.sfxGain = null;
+        this.bgmGain = null;
+        this.bgmTimer = null;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+          this.masterGain = this.ctx.createGain();
+          this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : this.volume, this.ctx.currentTime);
+          this.sfxGain = this.ctx.createGain();
+          this.sfxGain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+          this.bgmGain = this.ctx.createGain();
+          this.bgmGain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+          this.sfxGain.connect(this.masterGain);
+          this.bgmGain.connect(this.masterGain);
+          this.masterGain.connect(this.ctx.destination);
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+      }
+      setVolume(pct) {
+        this.volume = Math.max(0, Math.min(100, pct)) / 100;
+        this.init();
+        if (this.isMuted && pct > 0) this.isMuted = false;
+        this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : this.volume, this.ctx.currentTime);
+      }
+      toggleMute() {
+        this.isMuted = !this.isMuted;
+        this.init();
+        this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : this.volume, this.ctx.currentTime);
+        return this.isMuted;
+      }
+      playCoin() {
+        this.init(); if (this.isMuted) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(987, now);
+        osc.frequency.exponentialRampToValueAtTime(1318, now + 0.08);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.connect(gain); gain.connect(this.sfxGain);
+        osc.start(now); osc.stop(now + 0.18);
+      }
+      playJump() {
+        this.init(); if (this.isMuted) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(440, now + 0.15);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.connect(gain); gain.connect(this.sfxGain);
+        osc.start(now); osc.stop(now + 0.18);
+      }
+      playSlide() {
+        this.init(); if (this.isMuted) return;
+        const now = this.ctx.currentTime;
+        const bufferSize = this.ctx.sampleRate * 0.15;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(800, now);
+        filter.frequency.exponentialRampToValueAtTime(300, now + 0.15);
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        noise.connect(filter); filter.connect(gain); gain.connect(this.sfxGain);
+        noise.start(now);
+      }
+      playCrash() {
+        this.init(); if (this.isMuted) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.25);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        osc.connect(gain); gain.connect(this.sfxGain);
+        osc.start(now); osc.stop(now + 0.28);
+      }
+      playCreeperHiss() {
+        this.init(); if (this.isMuted) return () => {};
+        const duration = 1.7;
+        const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(2400, this.ctx.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(3800, this.ctx.currentTime + duration);
+        const gain = this.ctx.createGain();
+        const now = this.ctx.currentTime;
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.linearRampToValueAtTime(0.45, now + duration * 0.7);
+        gain.gain.exponentialRampToValueAtTime(0.65, now + duration);
+        noise.connect(filter); filter.connect(gain); gain.connect(this.sfxGain);
+        noise.start(now);
+        return () => { try { noise.stop(); } catch(e){} };
+      }
+      playCreeperExplosion() {
+        this.init(); if (this.isMuted) return;
+        const now = this.ctx.currentTime;
+        const subOsc = this.ctx.createOscillator();
+        const subGain = this.ctx.createGain();
+        subOsc.type = 'triangle';
+        subOsc.frequency.setValueAtTime(90, now);
+        subOsc.frequency.exponentialRampToValueAtTime(25, now + 0.45);
+        subGain.gain.setValueAtTime(0.75, now);
+        subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+        subOsc.connect(subGain); subGain.connect(this.sfxGain);
+        subOsc.start(now); subOsc.stop(now + 0.5);
+
+        const bufferSize = Math.floor(this.ctx.sampleRate * 0.65);
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.15));
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1200, now);
+        filter.frequency.exponentialRampToValueAtTime(200, now + 0.65);
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.85, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+        noise.connect(filter); filter.connect(noiseGain); noiseGain.connect(this.sfxGain);
+        noise.start(now);
+      }
+      playCorrect() {
+        this.init(); if (this.isMuted) return;
+        const notes = [523.25, 659.25, 783.99, 1046.5];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + idx * 0.09;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.connect(gain); gain.connect(this.sfxGain);
+          osc.start(now); osc.stop(now + 0.35);
+        });
+      }
+      startBgm() {
+        this.init();
+        if (this.bgmTimer) return;
+        const melody = [261, 329, 392, 440, 392, 329, 261, 196, 220, 261, 329, 392, 329, 293, 261, 392];
+        let step = 0;
+        this.bgmTimer = setInterval(() => {
+          if (this.isMuted || !this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(melody[step % melody.length], now);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+          osc.connect(gain); gain.connect(this.bgmGain);
+          osc.start(now); osc.stop(now + 0.16);
+          step++;
+        }, 185);
+      }
+      stopBgm() {
+        if (this.bgmTimer) { clearInterval(this.bgmTimer); this.bgmTimer = null; }
+      }
+    }
+    const sound = new SoundEngine();
+
+    const container = document.getElementById('game-canvas');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x70a5ff);
+    scene.fog = new THREE.Fog(0x70a5ff, 40, 110);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+    camera.position.set(0, 3.5, 6.0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x445544, 0.7);
+    scene.add(hemiLight);
+    const sunLight = new THREE.DirectionalLight(0xfff5e6, 1.4);
+    sunLight.position.set(20, 40, 20);
+    sunLight.castShadow = true;
+    scene.add(sunLight);
+
+    function makePixelTex(w, h, draw) {
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      const ctx = c.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      draw(ctx);
+      const tex = new THREE.CanvasTexture(c);
+      tex.magFilter = THREE.NearestFilter;
+      tex.minFilter = THREE.NearestFilter;
+      return tex;
+    }
+
+    const railTex = makePixelTex(32, 32, (ctx) => {
+      ctx.fillStyle = '#4b4b4b'; ctx.fillRect(0,0,32,32);
+      ctx.fillStyle = '#68431e';
+      ctx.fillRect(4, 4, 24, 4); ctx.fillRect(4, 18, 24, 4);
+      ctx.fillStyle = '#c0c0c0';
+      ctx.fillRect(8, 0, 2, 32); ctx.fillRect(22, 0, 2, 32);
+    });
+    railTex.wrapS = THREE.RepeatWrapping;
+    railTex.wrapT = THREE.RepeatWrapping;
+    railTex.repeat.set(1, 20);
+
+    const playerGroup = new THREE.Group();
+    const steveSkinMat = new THREE.MeshStandardMaterial({ color: 0xdb9979, roughness: 0.8 });
+    const steveShirtMat = new THREE.MeshStandardMaterial({ color: 0x00a8a8, roughness: 0.7 });
+    const stevePantsMat = new THREE.MeshStandardMaterial({ color: 0x223388, roughness: 0.8 });
+
+    const pHead = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), steveSkinMat);
+    pHead.position.y = 1.45; playerGroup.add(pHead);
+    const pTorso = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.7, 0.28), steveShirtMat);
+    pTorso.position.y = 0.95; playerGroup.add(pTorso);
+
+    const pLeftArm = new THREE.Group(); pLeftArm.position.set(0.36, 1.25, 0);
+    const pLArmMesh = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.7, 0.24), steveShirtMat);
+    pLArmMesh.position.y = -0.35; pLeftArm.add(pLArmMesh);
+    playerGroup.add(pLeftArm);
+
+    const pRightArm = new THREE.Group(); pRightArm.position.set(-0.36, 1.25, 0);
+    const pRArmMesh = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.7, 0.24), steveShirtMat);
+    pRArmMesh.position.y = -0.35; pRightArm.add(pRArmMesh);
+    playerGroup.add(pRightArm);
+
+    const pLeftLeg = new THREE.Group(); pLeftLeg.position.set(0.14, 0.6, 0);
+    const pLLegMesh = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.6, 0.24), stevePantsMat);
+    pLLegMesh.position.y = -0.3; pLeftLeg.add(pLLegMesh);
+    playerGroup.add(pLeftLeg);
+
+    const pRightLeg = new THREE.Group(); pRightLeg.position.set(-0.14, 0.6, 0);
+    const pRLegMesh = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.6, 0.24), stevePantsMat);
+    pRLegMesh.position.y = -0.3; pRightLeg.add(pRLegMesh);
+    playerGroup.add(pRightLeg);
+
+    scene.add(playerGroup);
+
+    const LANE_X = [-2.6, 0, 2.6];
+    let chunks = [];
+    const CHUNK_LEN = 60;
+    function createChunk(zStart) {
+      const g = new THREE.Group();
+      const zC = zStart - CHUNK_LEN / 2;
+      const ground = new THREE.Mesh(new THREE.PlaneGeometry(36, CHUNK_LEN), new THREE.MeshStandardMaterial({ color: 0x417d26 }));
+      ground.rotation.x = -Math.PI / 2; ground.position.set(0, 0, zC);
+      g.add(ground);
+      LANE_X.forEach(lx => {
+        const rail = new THREE.Mesh(new THREE.PlaneGeometry(2.2, CHUNK_LEN), new THREE.MeshStandardMaterial({ map: railTex }));
+        rail.rotation.x = -Math.PI / 2; rail.position.set(lx, 0.15, zC);
+        g.add(rail);
+      });
+      scene.add(g);
+      chunks.push({ zStart, zEnd: zStart - CHUNK_LEN, group: g });
+    }
+    for (let i = 0; i < 4; i++) createChunk(-i * CHUNK_LEN);
+
+    let obstacles = [];
+    let coins = [];
+    function spawnObstacle(type, lane, z) {
+      const g = new THREE.Group();
+      if (type === 'train') {
+        const body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 2.2, 5.5), new THREE.MeshStandardMaterial({ color: 0x475569 }));
+        body.position.y = 1.3; g.add(body);
+      } else if (type === 'fence') {
+        const fence = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.7, 0.3), new THREE.MeshStandardMaterial({ color: 0x8a6538 }));
+        fence.position.y = 0.35; g.add(fence);
+      } else {
+        const block = new THREE.Mesh(new THREE.BoxGeometry(1.9, 1.5, 0.8), new THREE.MeshStandardMaterial({ color: 0x626262 }));
+        block.position.y = 0.75; g.add(block);
+      }
+      g.position.set(LANE_X[lane], 0, z);
+      scene.add(g);
+      obstacles.push({ type, lane, z, mesh: g, hit: false });
+    }
+
+    function spawnCoin(lane, z, y = 0.9) {
+      const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.1, 8), new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.8, roughness: 0.2 }));
+      coin.rotation.x = Math.PI / 2;
+      coin.position.set(LANE_X[lane], y, z);
+      scene.add(coin);
+      coins.push({ lane, z, mesh: coin, collected: false });
+    }
+
+    let portalMesh = null;
+    function spawnPortal(z) {
+      if (portalMesh) scene.remove(portalMesh);
+      portalMesh = new THREE.Group();
+      const pL = new THREE.Mesh(new THREE.BoxGeometry(0.8, 6, 0.8), new THREE.MeshStandardMaterial({ color: 0x1e152a }));
+      pL.position.set(-4.2, 3, 0); portalMesh.add(pL);
+      const pR = new THREE.Mesh(new THREE.BoxGeometry(0.8, 6, 0.8), new THREE.MeshStandardMaterial({ color: 0x1e152a }));
+      pR.position.set(4.2, 3, 0); portalMesh.add(pR);
+      const top = new THREE.Mesh(new THREE.BoxGeometry(9.2, 0.8, 0.8), new THREE.MeshStandardMaterial({ color: 0x1e152a }));
+      top.position.set(0, 5.6, 0); portalMesh.add(top);
+      const field = new THREE.Mesh(new THREE.PlaneGeometry(7.6, 4.8), new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.8 }));
+      field.position.set(0, 2.8, 0); portalMesh.add(field);
+      portalMesh.position.set(0, 0, z);
+      scene.add(portalMesh);
+    }
+
+    let gameState = 'menu';
+    let lives = 7;
+    let score = 0;
+    let coinCount = 0;
+    let playerZ = 0;
+    let playerX = 0;
+    let targetLane = 1;
+    let playerY = 0;
+    let playerVY = 0;
+    let isJumping = false;
+    let isSliding = false;
+    let slideTimer = 0;
+    let runAnimTime = 0;
+    let currentQIndex = 0;
+    let nextCheckpointZ = -140;
+    let invulnerableTimer = 0;
+
+    function resetGame() {
+      lives = 7;
+      score = 0;
+      coinCount = 0;
+      playerZ = 0;
+      playerX = 0;
+      targetLane = 1;
+      playerY = 0;
+      playerVY = 0;
+      isJumping = false;
+      isSliding = false;
+      currentQIndex = 0;
+      nextCheckpointZ = -140;
+      invulnerableTimer = 0;
+      playerGroup.position.set(0, 0, 0);
+
+      obstacles.forEach(o => scene.remove(o.mesh));
+      obstacles = [];
+      coins.forEach(c => scene.remove(c.mesh));
+      coins = [];
+      chunks.forEach(c => scene.remove(c.group));
+      chunks = [];
+      for (let i = 0; i < 4; i++) createChunk(-i * CHUNK_LEN);
+      spawnPortal(nextCheckpointZ);
+
+      for (let z = -30; z > -130; z -= 22) {
+        const free = Math.floor(Math.random() * 3);
+        const obsLane = (free + 1) % 3;
+        spawnObstacle(Math.random() > 0.5 ? 'block' : 'fence', obsLane, z);
+        spawnCoin(free, z);
+      }
+      updateHUD();
+    }
+
+    function updateHUD() {
+      let heartStr = '';
+      for (let i = 1; i <= 7; i++) heartStr += i <= lives ? '❤️' : '🖤';
+      document.getElementById('hud-hearts').textContent = heartStr;
+      document.getElementById('hud-lives-num').textContent = `(${lives}/٧)`;
+      document.getElementById('hud-checkpoint').textContent = `${currentQIndex} / ١٠`;
+      document.getElementById('hud-score').textContent = Math.floor(score);
+      document.getElementById('hud-coins').textContent = coinCount;
+    }
+
+    function showQuiz(index) {
+      gameState = 'quiz';
+      const q = QUESTIONS[index];
+      document.getElementById('quiz-chk-tag').textContent = `نُقْطَةُ التَّفَتُّشِ #${q.id}`;
+      document.getElementById('quiz-num-tag').textContent = `السُّؤَالُ ${q.id} مِنْ ١٠`;
+      document.getElementById('quiz-lives-text').textContent = `(${lives}/٧)`;
+      document.getElementById('quiz-question-text').textContent = q.question;
+
+      const cont = document.getElementById('quiz-options-container');
+      cont.innerHTML = '';
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'mc-button';
+        btn.style.padding = '12px';
+        btn.style.textAlign = 'right';
+        btn.style.fontSize = '13px';
+        btn.style.display = 'flex';
+        btn.style.gap = '8px';
+        btn.innerHTML = `<span style="background: #111; color: #fde047; padding: 2px 8px; border-radius: 4px; font-weight: 800;">${ARABIC_LETTERS[opt.key]}</span> <span>${opt.text}</span>`;
+        btn.onclick = () => handleAnswer(opt.key);
+        cont.appendChild(btn);
+      });
+
+      document.getElementById('quiz-modal').classList.remove('hidden');
+    }
+
+    function handleAnswer(chosenKey) {
+      document.getElementById('quiz-modal').classList.add('hidden');
+      const q = QUESTIONS[currentQIndex];
+
+      if (chosenKey === q.correct) {
+        sound.playCorrect();
+        gameState = 'correct';
+        const opt = q.options.find(o => o.key === chosenKey);
+        document.getElementById('correct-chosen-answer').textContent = `${ARABIC_LETTERS[chosenKey]}. ${opt.text}`;
+        document.getElementById('correct-explanation').textContent = q.explanation;
+        document.getElementById('correct-modal').classList.remove('hidden');
+      } else {
+        gameState = 'creeper';
+        const stopHiss = sound.playCreeperHiss();
+        const creeperModal = document.getElementById('creeper-modal');
+        const animCont = document.getElementById('creeper-anim-container');
+        const feedbackPanel = document.getElementById('creeper-feedback-panel');
+
+        animCont.classList.remove('hidden');
+        feedbackPanel.classList.add('hidden');
+        creeperModal.classList.remove('hidden');
+
+        setTimeout(() => {
+          stopHiss();
+          sound.playCreeperExplosion();
+
+          lives = Math.max(0, lives - 1);
+          updateHUD();
+
+          animCont.classList.add('hidden');
+          feedbackPanel.classList.remove('hidden');
+
+          let heartStr = '';
+          for (let i = 1; i <= 7; i++) heartStr += i <= lives ? '❤️' : '🖤';
+          document.getElementById('creeper-hearts-display').textContent = heartStr;
+          document.getElementById('creeper-hearts-num').textContent = `(${lives}/٧)`;
+
+          const chosenOpt = q.options.find(o => o.key === chosenKey);
+          const correctOpt = q.options.find(o => o.key === q.correct);
+          document.getElementById('creeper-chosen-answer').textContent = `${ARABIC_LETTERS[chosenKey]}. ${chosenOpt.text}`;
+          document.getElementById('creeper-correct-text').textContent = `الإِجَابَةُ الصَّوَابُ: ${ARABIC_LETTERS[q.correct]}. ${correctOpt.text}`;
+          document.getElementById('creeper-explanation-text').textContent = q.explanation;
+
+          const tryBtn = document.getElementById('creeper-tryagain-btn');
+          if (lives <= 0) {
+            tryBtn.textContent = '💀 نَفِدَتِ الْقُلُوبُ - انْتِهَاءُ اللَّعِبِ';
+            tryBtn.onclick = () => {
+              creeperModal.classList.add('hidden');
+              showGameOver();
+            };
+          } else {
+            tryBtn.textContent = '🔄 حَاوِلْ مَرَّةً أُخْرَى';
+            tryBtn.onclick = () => {
+              creeperModal.classList.add('hidden');
+              showQuiz(currentQIndex);
+            };
+          }
+        }, 1800);
+      }
+    }
+
+    document.getElementById('correct-continue-btn').onclick = () => {
+      document.getElementById('correct-modal').classList.add('hidden');
+      currentQIndex++;
+      if (currentQIndex >= 10) {
+        showVictory();
+      } else {
+        nextCheckpointZ -= 140;
+        spawnPortal(nextCheckpointZ);
+        gameState = 'playing';
+      }
+    };
+
+    function showGameOver() {
+      gameState = 'gameover';
+      sound.stopBgm();
+      document.getElementById('go-answered').textContent = `${currentQIndex} / ١٠`;
+      document.getElementById('go-coins').textContent = coinCount;
+      document.getElementById('go-score').textContent = Math.floor(score);
+      document.getElementById('gameover-modal').classList.remove('hidden');
+    }
+
+    function showVictory() {
+      gameState = 'victory';
+      sound.stopBgm();
+      document.getElementById('vic-score').textContent = Math.floor(score);
+      document.getElementById('vic-coins').textContent = coinCount;
+      document.getElementById('vic-lives').textContent = `${lives} / ٧`;
+      document.getElementById('victory-modal').classList.remove('hidden');
+    }
+
+    function moveLeft() { if (gameState === 'playing' && targetLane > 0) targetLane--; }
+    function moveRight() { if (gameState === 'playing' && targetLane < 2) targetLane++; }
+    function jump() {
+      if (gameState === 'playing' && !isJumping) {
+        isJumping = true;
+        playerVY = 11.5;
+        sound.playJump();
+      }
+    }
+    function slide() {
+      if (gameState === 'playing') {
+        isSliding = true;
+        slideTimer = 0.65;
+        if (isJumping) playerVY = -12;
+        sound.playSlide();
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'ArrowLeft' || e.code === 'KeyA') moveLeft();
+      if (e.code === 'ArrowRight' || e.code === 'KeyD') moveRight();
+      if (e.code === 'ArrowUp' || e.code === 'KeyW' || e.code === 'Space') { e.preventDefault(); jump(); }
+      if (e.code === 'ArrowDown' || e.code === 'KeyS') { e.preventDefault(); slide(); }
+    });
+
+    let tX = 0, tY = 0;
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) { tX = e.touches[0].clientX; tY = e.touches[0].clientY; }
+    }, { passive: true });
+    window.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - tX;
+      const dy = e.changedTouches[0].clientY - tY;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx < -30) moveRight();
+        else if (dx > 30) moveLeft();
+      } else {
+        if (dy < -30) jump();
+        else if (dy > 30) slide();
+      }
+    }, { passive: true });
+
+    document.getElementById('btn-touch-left').onclick = moveLeft;
+    document.getElementById('btn-touch-right').onclick = moveRight;
+    document.getElementById('btn-touch-jump').onclick = jump;
+    document.getElementById('btn-touch-slide').onclick = slide;
+
+    document.getElementById('start-btn').onclick = () => {
+      resetGame();
+      document.getElementById('menu-screen').classList.add('hidden');
+      document.getElementById('hud-layer').classList.remove('hidden');
+      gameState = 'playing';
+      sound.startBgm();
+    };
+
+    document.getElementById('pause-btn').onclick = () => {
+      if (gameState === 'playing') { gameState = 'paused'; document.getElementById('pause-btn').textContent = '▶️ اسْتِئْنَاف'; }
+      else if (gameState === 'paused') { gameState = 'playing'; document.getElementById('pause-btn').textContent = '⏸️ إِيقَاف'; }
+    };
+
+    document.getElementById('go-restart-btn').onclick = () => {
+      document.getElementById('gameover-modal').classList.add('hidden');
+      resetGame();
+      gameState = 'playing';
+      sound.startBgm();
+    };
+    document.getElementById('go-menu-btn').onclick = () => {
+      document.getElementById('gameover-modal').classList.add('hidden');
+      document.getElementById('hud-layer').classList.add('hidden');
+      document.getElementById('menu-screen').classList.remove('hidden');
+      gameState = 'menu';
+    };
+    document.getElementById('vic-restart-btn').onclick = () => {
+      document.getElementById('victory-modal').classList.add('hidden');
+      resetGame();
+      gameState = 'playing';
+      sound.startBgm();
+    };
+    document.getElementById('vic-menu-btn').onclick = () => {
+      document.getElementById('victory-modal').classList.add('hidden');
+      document.getElementById('hud-layer').classList.add('hidden');
+      document.getElementById('menu-screen').classList.remove('hidden');
+      gameState = 'menu';
+    };
+
+    document.getElementById('btn-how').onclick = () => document.getElementById('how-modal').classList.remove('hidden');
+    document.getElementById('how-close-btn').onclick = () => document.getElementById('how-modal').classList.add('hidden');
+    document.getElementById('how-ok-btn').onclick = () => document.getElementById('how-modal').classList.add('hidden');
+    document.getElementById('btn-credits').onclick = () => document.getElementById('credits-modal').classList.remove('hidden');
+    document.getElementById('credits-close-btn').onclick = () => document.getElementById('credits-modal').classList.add('hidden');
+    document.getElementById('credits-ok-btn').onclick = () => document.getElementById('credits-modal').classList.add('hidden');
+
+    const volBtn = document.getElementById('vol-btn');
+    const volPanel = document.getElementById('vol-panel');
+    const volSlider = document.getElementById('vol-slider');
+    const volMuteBtn = document.getElementById('vol-mute-btn');
+    const volPctText = document.getElementById('vol-pct-text');
+    volBtn.onclick = () => volPanel.classList.toggle('hidden');
+    document.getElementById('vol-close-btn').onclick = () => volPanel.classList.add('hidden');
+    volSlider.oninput = (e) => {
+      const v = parseInt(e.target.value);
+      sound.setVolume(v);
+      volPctText.textContent = `${v}٪`;
+      volBtn.textContent = v === 0 ? '🔇' : '🔊';
+    };
+    volMuteBtn.onclick = () => {
+      const isM = sound.toggleMute();
+      volBtn.textContent = isM ? '🔇' : '🔊';
+      volMuteBtn.textContent = isM ? 'تَشْغِيلُ الصَّوْتِ' : 'كَتْمُ الصَّوْتِ';
+      volPctText.textContent = isM ? '٠٪ (مَكْتُوم)' : `${Math.round(sound.volume * 100)}٪`;
+    };
+
+    let lastTime = performance.now();
+    function animate() {
+      requestAnimationFrame(animate);
+      const now = performance.now();
+      const dt = Math.min((now - lastTime) / 1000, 0.05);
+      lastTime = now;
+
+      if (gameState === 'playing') {
+        playerZ -= 18 * dt;
+        score = Math.abs(playerZ) * 2 + coinCount * 10;
+        updateHUD();
+
+        const targetX = LANE_X[targetLane];
+        playerX += (targetX - playerX) * 15 * dt;
+
+        if (isJumping) {
+          playerY += playerVY * dt;
+          playerVY -= 32 * dt;
+          if (playerY <= 0) { playerY = 0; playerVY = 0; isJumping = false; }
+        }
+
+        if (isSliding) {
+          slideTimer -= dt;
+          if (slideTimer <= 0) isSliding = false;
+        }
+
+        if (invulnerableTimer > 0) invulnerableTimer -= dt;
+
+        runAnimTime += dt * 14;
+        const swing = Math.sin(runAnimTime) * 0.8;
+        if (isSliding) {
+          pTorso.rotation.x = 0.65;
+          pTorso.position.y = 0.45;
+          pLeftLeg.rotation.x = -1.1;
+          pRightLeg.rotation.x = -1.1;
+        } else if (isJumping) {
+          pTorso.rotation.x = 0;
+          pTorso.position.y = 0.95;
+          pLeftLeg.rotation.x = 0.4;
+          pRightLeg.rotation.x = 0.4;
+        } else {
+          pTorso.rotation.x = 0;
+          pTorso.position.y = 0.95;
+          pLeftArm.rotation.x = swing;
+          pRightArm.rotation.x = -swing;
+          pLeftLeg.rotation.x = -swing;
+          pRightLeg.rotation.x = swing;
+        }
+
+        playerGroup.position.set(playerX, playerY, playerZ);
+        camera.position.set(playerX * 0.45, playerY * 0.4 + 3.4, playerZ + 6.2);
+        camera.lookAt(playerX * 0.3, playerY * 0.3 + 1.3, playerZ - 6.0);
+
+        if (currentQIndex < 10 && playerZ <= nextCheckpointZ + 1.0) {
+          showQuiz(currentQIndex);
+        }
+
+        coins.forEach(c => {
+          if (!c.collected && Math.abs(c.z - playerZ) < 1.4 && Math.abs(LANE_X[c.lane] - playerX) < 1.0) {
+            c.collected = true;
+            scene.remove(c.mesh);
+            coinCount++;
+            sound.playCoin();
+          }
+        });
+
+        if (invulnerableTimer <= 0) {
+          obstacles.forEach(o => {
+            if (!o.hit && Math.abs(o.z - playerZ) < 1.4 && Math.abs(LANE_X[o.lane] - playerX) < 0.9) {
+              if (o.type === 'fence' && playerY > 0.8) {
+              } else {
+                o.hit = true;
+                lives = Math.max(0, lives - 1);
+                invulnerableTimer = 1.2;
+                sound.playCrash();
+                updateHUD();
+                if (lives <= 0) showGameOver();
+              }
+            }
+          });
+        }
+
+        const lastC = chunks[chunks.length - 1];
+        if (playerZ - 100 < lastC.zEnd) createChunk(lastC.zEnd);
+      }
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.onresize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+  </script>
+</body>
+</html>
